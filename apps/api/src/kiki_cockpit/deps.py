@@ -19,3 +19,10 @@ def get_eval_index(request: Request) -> EvalIndex:
     if index is None:
         raise RuntimeError("EvalIndex not initialized in app.state")
     return index
+
+
+def get_training_runs_provider(request: Request):
+    provider = getattr(request.app.state, "training_runs_provider", None)
+    if provider is None:
+        raise RuntimeError("training_runs provider not initialized")
+    return provider

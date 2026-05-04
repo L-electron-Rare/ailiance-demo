@@ -31,5 +31,22 @@ class Settings(BaseSettings):
     # Cache
     cache_dir: Path = Path.home() / ".cache" / "kiki-cockpit"
 
+    # Training runs
+    training_log_roots: list[Path] = Field(
+        default_factory=lambda: [
+            Path.home() / "Documents" / "Projets" / "KIKI-Mac_tunner" / "logs",
+            Path.home() / "Documents" / "Projets" / "eu-kiki" / "logs",
+        ],
+    )
+    machine_label: str = "studio"
+    workers_to_check: list[dict] = Field(
+        default_factory=lambda: [
+            {"name": "gateway", "url": "http://localhost:9200/health"},
+            {"name": "apertus", "url": "http://localhost:9301/health"},
+            {"name": "devstral", "url": "http://localhost:9302/health"},
+            {"name": "eurollm", "url": "http://localhost:9303/health"},
+        ],
+    )
+
 
 settings = Settings()

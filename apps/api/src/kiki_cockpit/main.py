@@ -12,6 +12,7 @@ from slowapi import _rate_limit_exceeded_handler
 
 from kiki_cockpit.config import settings
 from kiki_cockpit.routers.admin import health as admin_health
+from kiki_cockpit.routers.admin import training as admin_training
 from kiki_cockpit.routers.public import health as public_health
 from kiki_cockpit.routers.public import models as public_models
 from kiki_cockpit.routers.public import eval as public_eval
@@ -19,6 +20,7 @@ from kiki_cockpit.routers.public import chat as public_chat
 from kiki_cockpit.services.featured import load_featured
 from kiki_cockpit.services.hf_cache import HFCache
 from kiki_cockpit.services.eval_index import EvalIndex
+from kiki_cockpit.services.training_runs_provider import TrainingRunsProvider
 
 log = structlog.get_logger()
 
@@ -77,6 +79,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         if top is not None:
             card.top_eval_benchmark, card.top_eval_score = top
 
+    runs_provider = TrainingRunsProvider(
+        roots=settings.training_log_roots,
+        machine_label=settings.machine_label,
+    )
+    app.state.training_runs_provider = runs_provider
+
     yield
 
     refresh_task.cancel()
@@ -112,6 +120,7 @@ def create_app() -> FastAPI:
     app.include_router(public_eval.router)
     app.include_router(public_chat.router)
     app.include_router(admin_health.router)
+    app.include_router(admin_training.router)
 
     return app
 
