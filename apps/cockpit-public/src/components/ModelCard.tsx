@@ -26,7 +26,7 @@ export function ModelCard({ card }: Props) {
         <p className="mt-2 text-sm text-slate-700 italic">{card.featured_headline}</p>
       )}
 
-      {card.top_eval_score !== null && card.top_eval_benchmark && (
+      {card.top_eval_score != null && card.top_eval_benchmark && (
         <p className="mt-2 text-sm font-mono">
           {card.top_eval_benchmark}: {(card.top_eval_score * 100).toFixed(1)}%
         </p>
