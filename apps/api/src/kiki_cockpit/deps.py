@@ -4,6 +4,7 @@ from __future__ import annotations
 from fastapi import Request
 
 from kiki_cockpit.services.hf_cache import HFCache
+from kiki_cockpit.services.eval_index import EvalIndex
 
 
 def get_hf_cache(request: Request) -> HFCache:
@@ -11,3 +12,10 @@ def get_hf_cache(request: Request) -> HFCache:
     if cache is None:
         raise RuntimeError("HFCache not initialized in app.state")
     return cache
+
+
+def get_eval_index(request: Request) -> EvalIndex:
+    index = getattr(request.app.state, "eval_index", None)
+    if index is None:
+        raise RuntimeError("EvalIndex not initialized in app.state")
+    return index

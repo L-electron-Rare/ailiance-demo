@@ -10,8 +10,10 @@ from kiki_cockpit.config import settings
 from kiki_cockpit.routers.admin import health as admin_health
 from kiki_cockpit.routers.public import health as public_health
 from kiki_cockpit.routers.public import models as public_models
+from kiki_cockpit.routers.public import eval as public_eval
 from kiki_cockpit.services.featured import load_featured
 from kiki_cockpit.services.hf_cache import HFCache
+from kiki_cockpit.services.eval_index import EvalIndex
 
 log = structlog.get_logger()
 
@@ -41,6 +43,22 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     except Exception as exc:
         log.warning("hf.initial_refresh_failed", error=str(exc))
 
+    eval_index = EvalIndex(
+        roots=[
+            settings.eu_kiki_root / "eval" / "results",
+            settings.eu_kiki_root / "output" / "eval",
+            settings.kiki_mac_tunner_root / "results",
+        ],
+    )
+    eval_index.refresh()
+    app.state.eval_index = eval_index
+
+    # Annotate cards with top score
+    for card in cache.list_cards():
+        top = eval_index.top_score_for(card.id)
+        if top is not None:
+            card.top_eval_benchmark, card.top_eval_score = top
+
     yield
 
     log.info("shutdown")
@@ -64,6 +82,7 @@ def create_app() -> FastAPI:
 
     app.include_router(public_health.router)
     app.include_router(public_models.router)
+    app.include_router(public_eval.router)
     app.include_router(admin_health.router)
 
     return app
