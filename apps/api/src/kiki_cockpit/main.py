@@ -5,12 +5,16 @@ from collections.abc import AsyncIterator
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi import _rate_limit_exceeded_handler
 
 from kiki_cockpit.config import settings
 from kiki_cockpit.routers.admin import health as admin_health
 from kiki_cockpit.routers.public import health as public_health
 from kiki_cockpit.routers.public import models as public_models
 from kiki_cockpit.routers.public import eval as public_eval
+from kiki_cockpit.routers.public import chat as public_chat
 from kiki_cockpit.services.featured import load_featured
 from kiki_cockpit.services.hf_cache import HFCache
 from kiki_cockpit.services.eval_index import EvalIndex
@@ -80,9 +84,14 @@ def create_app() -> FastAPI:
         expose_headers=["X-Request-Id"],
     )
 
+    app.state.limiter = public_chat.limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    app.add_middleware(SlowAPIMiddleware)
+
     app.include_router(public_health.router)
     app.include_router(public_models.router)
     app.include_router(public_eval.router)
+    app.include_router(public_chat.router)
     app.include_router(admin_health.router)
 
     return app
