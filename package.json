@@ -1,0 +1,24 @@
+{
+  "name": "kiki-cockpit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "gen:api-types": "bash scripts/gen-api-types.sh"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "openapi-typescript": "7.4.4"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

@@ -1,0 +1,35 @@
+# Node
+node_modules/
+dist/
+.turbo/
+*.log
+pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Build outputs
+apps/cockpit-public/dist/
+apps/cockpit-admin/dist/
+apps/api/dist/
+packages/shared/src/api/types.ts
+
+# Caches
+.cache/
+~/.cache/kiki-cockpit/
+
+# Local dev
+.env
+.env.local
+*.local
