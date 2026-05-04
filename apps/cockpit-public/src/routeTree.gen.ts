@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ModelsIndexRouteImport } from './routes/models.index'
+import { Route as ModelsOwnerNameRouteImport } from './routes/models.$owner.$name'
 import { Route as ChatOwnerNameRouteImport } from './routes/chat.$owner.$name'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const ModelsIndexRoute = ModelsIndexRouteImport.update({
   path: '/models/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModelsOwnerNameRoute = ModelsOwnerNameRouteImport.update({
+  id: '/models/$owner/$name',
+  path: '/models/$owner/$name',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatOwnerNameRoute = ChatOwnerNameRouteImport.update({
   id: '/chat/$owner/$name',
   path: '/chat/$owner/$name',
@@ -33,30 +39,39 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/models/': typeof ModelsIndexRoute
   '/chat/$owner/$name': typeof ChatOwnerNameRoute
+  '/models/$owner/$name': typeof ModelsOwnerNameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/models': typeof ModelsIndexRoute
   '/chat/$owner/$name': typeof ChatOwnerNameRoute
+  '/models/$owner/$name': typeof ModelsOwnerNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/models/': typeof ModelsIndexRoute
   '/chat/$owner/$name': typeof ChatOwnerNameRoute
+  '/models/$owner/$name': typeof ModelsOwnerNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/models/' | '/chat/$owner/$name'
+  fullPaths: '/' | '/models/' | '/chat/$owner/$name' | '/models/$owner/$name'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/models' | '/chat/$owner/$name'
-  id: '__root__' | '/' | '/models/' | '/chat/$owner/$name'
+  to: '/' | '/models' | '/chat/$owner/$name' | '/models/$owner/$name'
+  id:
+    | '__root__'
+    | '/'
+    | '/models/'
+    | '/chat/$owner/$name'
+    | '/models/$owner/$name'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ModelsIndexRoute: typeof ModelsIndexRoute
   ChatOwnerNameRoute: typeof ChatOwnerNameRoute
+  ModelsOwnerNameRoute: typeof ModelsOwnerNameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,6 +90,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModelsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/models/$owner/$name': {
+      id: '/models/$owner/$name'
+      path: '/models/$owner/$name'
+      fullPath: '/models/$owner/$name'
+      preLoaderRoute: typeof ModelsOwnerNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chat/$owner/$name': {
       id: '/chat/$owner/$name'
       path: '/chat/$owner/$name'
@@ -89,6 +111,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ModelsIndexRoute: ModelsIndexRoute,
   ChatOwnerNameRoute: ChatOwnerNameRoute,
+  ModelsOwnerNameRoute: ModelsOwnerNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
