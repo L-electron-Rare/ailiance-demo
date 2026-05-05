@@ -34,6 +34,18 @@ export function ChatPlayground({ modelId, modelDisplayName }: Props) {
       <header>
         <h2 className="font-bold text-xl">Chat — {modelDisplayName}</h2>
         <p className="text-xs text-slate-500">{modelId}</p>
+        <p
+          role="note"
+          className="mt-2 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900"
+        >
+          <span aria-hidden>⚠️ </span>
+          You are interacting with an AI. Replies may be inaccurate, biased, or fabricated and
+          must not be treated as professional advice. See the{' '}
+          <a className="underline font-medium" href="/transparency">
+            transparency page
+          </a>{' '}
+          for model provenance and limitations.
+        </p>
       </header>
 
       <ParamsPanel value={params} onChange={setParams} />

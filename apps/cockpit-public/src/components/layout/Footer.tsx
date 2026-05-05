@@ -17,6 +17,10 @@ export function Footer() {
           <a className="underline" href="https://github.com/L-electron-Rare">
             https://github.com/L-electron-Rare
           </a>
+          {' · '}
+          <a className="underline" href="/transparency">
+            EU AI Act transparency
+          </a>
         </p>
       </div>
     </footer>
