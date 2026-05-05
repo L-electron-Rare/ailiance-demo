@@ -76,21 +76,22 @@ _LIVE_DETAILS: dict[str, dict] = {
         "license": "apache-2.0",
         "kind": ModelKind.QUANTIZED,
     },
-    "eu-kiki/qwen36-35b-a3b": {
-        "display_name": "Qwen3.6 35B A3B",
-        "base_model": "Qwen3.6 35B (MoE 128 experts, 3B active, Gated Delta Net)",
+    "eu-kiki/qwen3-next-80b-a3b-instruct": {
+        "display_name": "Qwen3-Next 80B A3B Instruct",
+        "base_model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
         "domain": "reasoning",
         "description": (
-            "Qwen3.6 35B Active-3B MoE — newer reasoning model with explicit "
-            "<think> traces and Gated Delta Net attention. llama.cpp Q4_K_M "
-            "on KXKM-AI server."
+            "Qwen3-Next 80B sparse MoE (3B active per token) — official Qwen "
+            "release pinned to commit 4c8630c. Q4_K_M served by llama.cpp on "
+            "RTX 4090 with MoE expert offload (experts in RAM, attention on "
+            "GPU). Provenance: docs/provenance/qwen3-next-80b-a3b-instruct.json"
         ),
-        "headline": "35B MoE / 3B active · Q4_K_M · KXKM-AI",
-        "parameters": 35_000_000_000,
-        "disk_size_bytes": 21_166_757_920,  # actual file size
-        "memory_gb": 21.0,
+        "headline": "80B MoE / 3B active · Q4_K_M · MoE offload · KXKM-AI",
+        "parameters": 80_000_000_000,
+        "disk_size_bytes": 48_410_988_384,
+        "memory_gb": 50.0,  # ~7 GB VRAM (attention + KV) + ~45 GB RAM (experts)
         "quantization": "Q4_K_M",
-        "host": "kxkm-ai (RTX 4090 via SSH tunnel)",
+        "host": "kxkm-ai (RTX 4090 + 62 GB RAM, MoE-offload)",
         "architecture": "gguf",
         "license": "apache-2.0",
         "kind": ModelKind.QUANTIZED,
