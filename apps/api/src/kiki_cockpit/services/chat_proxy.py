@@ -21,7 +21,7 @@ ALIAS_TO_GATEWAY_MODEL: dict[str, str] = {
     "eu-kiki/apertus-70b": "eu-kiki-apertus",
     "eu-kiki/devstral-24b": "eu-kiki-devstral",
     "eu-kiki/eurollm-22b": "eu-kiki-eurollm",
-    "eu-kiki/qwen-35b-a3b": "eu-kiki-qwen",
+    "eu-kiki/qwen36-35b-a3b": "eu-kiki-qwen",
     # The bare "eu-kiki" alias triggers the gateway's domain router (MiniLM
     # MLP classifier) — not in MODEL_FORCE_MAP on purpose. We surface the
     # decision in the chat stream via a route preamble (see stream_chat).

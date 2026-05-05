@@ -76,19 +76,20 @@ _LIVE_DETAILS: dict[str, dict] = {
         "license": "apache-2.0",
         "kind": ModelKind.QUANTIZED,
     },
-    "eu-kiki/qwen-35b-a3b": {
-        "display_name": "Qwen3.5 35B A3B",
-        "base_model": "Qwen3.5 35B (MoE 256 experts, 3B active)",
+    "eu-kiki/qwen36-35b-a3b": {
+        "display_name": "Qwen3.6 35B A3B",
+        "base_model": "Qwen3.6 35B (MoE 128 experts, 3B active, Gated Delta Net)",
         "domain": "reasoning",
         "description": (
-            "Qwen3.5 35B Active-3B MoE — reasoning-tuned with explicit "
-            "<think> traces. llama.cpp on KXKM-AI server."
+            "Qwen3.6 35B Active-3B MoE — newer reasoning model with explicit "
+            "<think> traces and Gated Delta Net attention. llama.cpp Q4_K_M "
+            "on KXKM-AI server."
         ),
-        "headline": "35B MoE / 3B active · Q3_K_XL · KXKM-AI",
+        "headline": "35B MoE / 3B active · Q4_K_M · KXKM-AI",
         "parameters": 35_000_000_000,
-        "disk_size_bytes": 17 * _GIB,
-        "memory_gb": 18.0,
-        "quantization": "Q3_K_XL",
+        "disk_size_bytes": 21_166_757_920,  # actual file size
+        "memory_gb": 21.0,
+        "quantization": "Q4_K_M",
         "host": "kxkm-ai (RTX 4090 via SSH tunnel)",
         "architecture": "gguf",
         "license": "apache-2.0",
