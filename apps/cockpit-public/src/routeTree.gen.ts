@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransparencyRouteImport } from './routes/transparency'
+import { Route as StatusRouteImport } from './routes/status'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ModelsIndexRouteImport } from './routes/models.index'
@@ -19,6 +20,11 @@ import { Route as ChatOwnerNameRouteImport } from './routes/chat.$owner.$name'
 const TransparencyRoute = TransparencyRouteImport.update({
   id: '/transparency',
   path: '/transparency',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -50,6 +56,7 @@ const ChatOwnerNameRoute = ChatOwnerNameRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/status': typeof StatusRoute
   '/transparency': typeof TransparencyRoute
   '/models/': typeof ModelsIndexRoute
   '/chat/$owner/$name': typeof ChatOwnerNameRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/status': typeof StatusRoute
   '/transparency': typeof TransparencyRoute
   '/models': typeof ModelsIndexRoute
   '/chat/$owner/$name': typeof ChatOwnerNameRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/status': typeof StatusRoute
   '/transparency': typeof TransparencyRoute
   '/models/': typeof ModelsIndexRoute
   '/chat/$owner/$name': typeof ChatOwnerNameRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/status'
     | '/transparency'
     | '/models/'
     | '/chat/$owner/$name'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/status'
     | '/transparency'
     | '/models'
     | '/chat/$owner/$name'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/status'
     | '/transparency'
     | '/models/'
     | '/chat/$owner/$name'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  StatusRoute: typeof StatusRoute
   TransparencyRoute: typeof TransparencyRoute
   ModelsIndexRoute: typeof ModelsIndexRoute
   ChatOwnerNameRoute: typeof ChatOwnerNameRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/transparency'
       fullPath: '/transparency'
       preLoaderRoute: typeof TransparencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  StatusRoute: StatusRoute,
   TransparencyRoute: TransparencyRoute,
   ModelsIndexRoute: ModelsIndexRoute,
   ChatOwnerNameRoute: ChatOwnerNameRoute,
