@@ -20,7 +20,7 @@ http:
       tls:
         certResolver: letsencrypt
     kiki-admin:
-      rule: 'Host(`admin.ailiance.fr`)'
+      rule: 'Host(`admin.ailiance.fr`) || Host(`admin.ml.saillant.cc`)'
       entryPoints: [websecure]
       service: kiki-admin
       priority: 1
