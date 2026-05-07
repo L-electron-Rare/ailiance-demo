@@ -44,23 +44,25 @@ _LIVE_DETAILS: dict[str, dict] = {
         "license": "modified-mit",
         "kind": ModelKind.QUANTIZED,
     },
-    "ailiance/devstral-24b": {
-        "display_name": "Devstral 24B",
-        "base_model": "Mistral Small 3.1",
-        "domain": "code",
+    "ailiance/gemma4-e4b-curriculum": {
+        "display_name": "Gemma 4 E4B + ailiance curriculum LoRA",
+        "base_model": "google/gemma-4-E4B-it",
+        "domain": "general",
         "description": (
-            "Mistral-AI Devstral 24B — code-focused. "
-            "Runs on Mac mini M1."
+            "Google Gemma 4 E4B Instruction-Tuned avec adapter LoRA fine-tuné "
+            "en curriculum 4 phases (seq 512 → 1024 → 2048 → 3072) sur le "
+            "dataset ailiance (~82k conversations, electronics + code). "
+            "Test loss 2.094 (perplexity 8.12). Tourne sur Mac mini M1."
         ),
-        "headline": "24B params · MLX 4-bit · Mac mini M1",
-        "parameters": 24_000_000_000,
-        "disk_size_bytes": 13 * _GIB,
-        "memory_gb": 14.0,
-        "quantization": "MLX 4-bit",
+        "headline": "E4B · MLX 4-bit + LoRA · Mac mini M1",
+        "parameters": 4_000_000_000,
+        "disk_size_bytes": 4 * _GIB,
+        "memory_gb": 12.0,
+        "quantization": "MLX 4-bit + LoRA",
         "host": "macm1 (Mac mini M1)",
         "architecture": "mlx",
-        "license": "apache-2.0",
-        "kind": ModelKind.QUANTIZED,
+        "license": "gemma-terms",
+        "kind": ModelKind.FINE_TUNED,
     },
     "ailiance/eurollm-22b": {
         "display_name": "EuroLLM 22B",

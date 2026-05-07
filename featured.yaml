@@ -11,9 +11,9 @@ featured:
   - id: ailiance/mistral-medium-3.5-128b
     rank: 4
     headline: "Mistral Medium 3.5 128B — frontier FR, Modified MIT (libre PME/startup), 262k ctx"
-  - id: ailiance/devstral-24b
+  - id: ailiance/gemma4-e4b-curriculum
     rank: 5
-    headline: "Devstral 2 24B — code generation EU"
+    headline: "Gemma 4 E4B + ailiance curriculum LoRA — fine-tuned electronics + code"
 
 deprecated:
   - id: electron-rare/kiki-stm32-sft-v1
@@ -27,5 +27,5 @@ aliases:
   clemsail/micro-kiki-v3: "Micro-KIKI v3"
   ailiance/apertus-70b: "Apertus 70B (AILIANCE)"
   ailiance/mistral-medium-3.5-128b: "Mistral Medium 3.5 128B (AILIANCE)"
-  ailiance/devstral-24b: "Devstral 24B (AILIANCE)"
+  ailiance/gemma4-e4b-curriculum: "Gemma 4 E4B curriculum (AILIANCE)"
   ailiance/eurollm-22b: "EuroLLM 22B (AILIANCE)"

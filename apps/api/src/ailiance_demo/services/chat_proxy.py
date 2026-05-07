@@ -19,7 +19,7 @@ ALIAS_TO_GATEWAY_MODEL: dict[str, str] = {
     # in tests because the request reaches a worker that doesn't recognize the
     # model id and degenerates.
     "ailiance/mistral-medium-3.5-128b": "ailiance-mistral",
-    "ailiance/devstral-24b": "ailiance-devstral",
+    "ailiance/gemma4-e4b-curriculum": "ailiance-gemma4",
     "ailiance/eurollm-22b": "ailiance-eurollm",
     "ailiance/gemma3-4b": "ailiance-gemma",
     "ailiance/qwen3-next-80b-a3b-instruct": "ailiance-qwen",
@@ -32,7 +32,7 @@ ALIAS_TO_GATEWAY_MODEL: dict[str, str] = {
 # Worker port → human-readable label, used for the route preamble.
 _PORT_LABELS: dict[int, str] = {
     9301: "Mistral Medium 3.5 128B (studio)",
-    9302: "Devstral 24B (macm1)",
+    9302: "Gemma 4 E4B + ailiance curriculum LoRA (macm1)",
     9303: "EuroLLM 22B (studio)",
     9304: "Gemma 3 4B (tower)",
     8002: "Qwen3.5 35B (kxkm-ai)",

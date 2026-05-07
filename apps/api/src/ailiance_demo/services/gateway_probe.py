@@ -18,7 +18,7 @@ log = structlog.get_logger()
 
 WORKERS = [
     {"id": "mistral-medium-3.5", "label": "Mistral Medium 3.5 128B", "url": "http://studio:9301", "host": "studio"},
-    {"id": "devstral", "label": "Devstral 24B", "url": "http://macm1:9302", "host": "macm1"},
+    {"id": "gemma4-e4b-curriculum", "label": "Gemma 4 E4B + ailiance curriculum LoRA", "url": "http://macm1:9302", "host": "macm1"},
     {"id": "eurollm", "label": "EuroLLM 22B", "url": "http://studio:9303", "host": "studio"},
     {"id": "gemma3", "label": "Gemma 3 4B", "url": "http://tower:9304", "host": "tower"},
     {"id": "qwen3-next", "label": "Qwen3-Next 80B", "url": "http://host.docker.internal:8002", "host": "kxkm-ai (RTX 4090, via autossh tunnel)"},
