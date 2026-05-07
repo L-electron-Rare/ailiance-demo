@@ -41,14 +41,16 @@ services:
       # Workers are pinged via Tailscale Magic DNS — same network agent-kiki
       # uses (see cli/src/utils/ailiance-default.ts).
       COCKPIT_HF_TOKEN: ${HF_TOKEN:-}
-      # Filesystem-on-studio access goes through the ailiance-collector HTTP shim
-      # (see deploy/collector/) — empty roots disables direct FS reads.
-      COCKPIT_TRAINING_LOG_ROOTS: "[]"
+      # Training logs are rsync'd from Studio + macm1 to /home/electron/training-logs
+      # on electron-server (cron, sync-training-logs.sh) and bind-mounted here.
+      COCKPIT_TRAINING_LOG_ROOTS: '["/training-logs/studio","/training-logs/macm1"]'
       COCKPIT_COLLECTOR_BASE_URL: ${COCKPIT_COLLECTOR_BASE_URL:-http://collector:9150}
     extra_hosts:
       # Lets the container reach the host's :9300 gateway and the Tailscale
       # Magic DNS names through the host network resolver.
       - "host.docker.internal:host-gateway"
+    volumes:
+      - /home/electron/training-logs:/training-logs:ro
     networks:
       - traefik
       - default
