@@ -277,19 +277,20 @@ async def _ssh_probe_gpu(host: str) -> dict | None:
             "temperature.gpu --format=csv,noheader,nounits"
         )
     else:
-        # Apple Silicon — drive ioreg through a Python one-liner. Avoids the
-        # shell-quoting pain of sed/awk with embedded regex when the command
-        # transits a zsh ssh login on the remote. macOS ships Python 3 by
-        # default since Catalina.
-        remote_cmd = (
-            "python3 -c 'import re,subprocess as s;"
-            "o=s.check_output([\"ioreg\",\"-rc\",\"AGXAccelerator\",\"-d\",\"1\"]).decode();"
-            "u=re.search(r\"\\\"Device Utilization %\\\"=(\\d+)\",o);"
-            "m=re.search(r\"\\\"In use system memory \\(driver\\)\\\"=(\\d+)\",o);"
-            "a=re.search(r\"\\\"Alloc system memory\\\"=(\\d+)\",o);"
-            "print(\",\".join(g.group(1) if g else \"0\" for g in [u,m,a]))"
-            "'"
+        # Apple Silicon — base64-encode the Python script so SSH/zsh quoting
+        # can't mangle the regex characters. The decoded payload reads the
+        # AGXAccelerator PerformanceStatistics line and prints "util,used,alloc".
+        import base64
+        payload = (
+            "import re,subprocess as s\n"
+            "o=s.check_output(['ioreg','-rc','AGXAccelerator','-d','1']).decode()\n"
+            "u=re.search(r'\"Device Utilization %\"=(\\d+)',o)\n"
+            "m=re.search(r'\"In use system memory \\(driver\\)\"=(\\d+)',o)\n"
+            "a=re.search(r'\"Alloc system memory\"=(\\d+)',o)\n"
+            "print(','.join(g.group(1) if g else '0' for g in [u,m,a]))\n"
         )
+        b64 = base64.b64encode(payload.encode()).decode()
+        remote_cmd = f"echo {b64} | base64 -d | python3"
     import asyncio
     cmd = [
         "ssh",
