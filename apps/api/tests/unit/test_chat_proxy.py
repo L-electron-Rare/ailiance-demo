@@ -32,7 +32,7 @@ async def test_stream_chat_forwards_sse_events() -> None:
     transport = httpx.MockTransport(server_handler)
 
     chat_req = ChatRequest(
-        model_id="ailiance/apertus-70b",
+        model_id="ailiance/mistral-medium-3.5-128b",
         messages=[{"role": "user", "content": "hi"}],
         temperature=0.7,
     )
