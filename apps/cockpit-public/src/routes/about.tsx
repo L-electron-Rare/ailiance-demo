@@ -28,31 +28,52 @@ function AboutPage() {
           Training: MLX bf16 LoRA on Mistral Large 123B, Qwen3.5-122B/35B, Apertus 70B, Devstral
           24B, EuroLLM 22B
         </li>
-        <li>Routing: Jina v3 embeddings + MLP classifier (40 domains)</li>
-        <li>Serving: 3-worker FastAPI gateway, BF16, shared memory pool</li>
-        <li>Evaluation: Lighteval + EvalPlus + MT-Bench + KIKI-native (KiCad/SPICE/EMC/MISRA)</li>
+        <li>
+          Routing: Jina v3 embeddings + MLP classifier (40 predicted domains, 5 fallback) with
+          two-tier cache (L1 hash + L2 semantic)
+        </li>
+        <li>
+          Orchestration: <strong>router v0.3 Deliberation chain</strong> — auto-engages on{' '}
+          <code>model: "ailiance"</code> for hardware/code domains, runs LLM output through a
+          sandboxed iact-bench validator, retries with stderr feedback on failure, emits per-chain
+          audit NDJSON. See the <a href="/transparency">transparency page</a> for details.
+        </li>
+        <li>Serving: multi-worker FastAPI gateway, BF16, shared memory pool</li>
+        <li>
+          Evaluation: Lighteval + EvalPlus + MT-Bench + iact-bench v0.2.0 (31 domains × 23 models,
+          25 sandboxed Docker validators)
+        </li>
       </ul>
       <h2>Portable backend</h2>
       <p>
-        The ailiance gateway and worker stack are <strong>not tied to Apple Silicon</strong>.
-        Our reference deployment runs on Mac Studio M3 Ultra (MLX) and macOS via MLX-LM and
-        llama.cpp, but the same OpenAI-compatible HTTP contract can be served from any
-        runtime that exposes a compatible <code>/v1/chat/completions</code> endpoint.
-        Confirmed-working backends:
+        The ailiance gateway and worker stack are <strong>not tied to Apple Silicon</strong>. Our
+        reference deployment runs on Mac Studio M3 Ultra (MLX) and macOS via MLX-LM and llama.cpp,
+        but the same OpenAI-compatible HTTP contract can be served from any runtime that exposes a
+        compatible <code>/v1/chat/completions</code> endpoint. Confirmed-working backends:
       </p>
       <ul>
-        <li><strong>Apple Silicon (arm64)</strong> — MLX / MLX-LM (reference), llama.cpp Metal</li>
-        <li><strong>NVIDIA CUDA (x86_64 / arm64)</strong> — vLLM, TGI, llama.cpp CUDA, Ollama</li>
-        <li><strong>AMD ROCm (x86_64)</strong> — vLLM ROCm, llama.cpp HIP</li>
-        <li><strong>Intel / generic x86_64</strong> — llama.cpp CPU/AVX2/AVX-512, OpenVINO</li>
-        <li><strong>ARM CPU (Linux arm64, e.g. Graviton, Ampere)</strong> — llama.cpp NEON</li>
+        <li>
+          <strong>Apple Silicon (arm64)</strong> — MLX / MLX-LM (reference), llama.cpp Metal
+        </li>
+        <li>
+          <strong>NVIDIA CUDA (x86_64 / arm64)</strong> — vLLM, TGI, llama.cpp CUDA, Ollama
+        </li>
+        <li>
+          <strong>AMD ROCm (x86_64)</strong> — vLLM ROCm, llama.cpp HIP
+        </li>
+        <li>
+          <strong>Intel / generic x86_64</strong> — llama.cpp CPU/AVX2/AVX-512, OpenVINO
+        </li>
+        <li>
+          <strong>ARM CPU (Linux arm64, e.g. Graviton, Ampere)</strong> — llama.cpp NEON
+        </li>
       </ul>
       <p>
         Models published in <a href="https://huggingface.co/clemsail">our HuggingFace org</a> are
         distributed in formats that cover this matrix: MLX safetensors (Apple Silicon), GGUF
         quantizations (llama.cpp, all platforms), and base bf16 safetensors (vLLM / TGI). The
-        gateway, router, and provenance pipeline are pure Python / FastAPI and run anywhere
-        Python 3.12+ is available.
+        gateway, router, and provenance pipeline are pure Python / FastAPI and run anywhere Python
+        3.12+ is available.
       </p>
     </article>
   );
