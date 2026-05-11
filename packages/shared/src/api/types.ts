@@ -37,6 +37,7 @@ export interface components {
       load_pct?: number | null;
       tokens_today?: number | null;
       kwh_per_day?: number | null;
+      served_models?: string[] | null;
     };
     StatusReport: {
       workers: components['schemas']['WorkerStatus'][];

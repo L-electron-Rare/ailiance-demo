@@ -249,12 +249,50 @@ function ModelsPage() {
                 {w.gpu && (
                   <div className="host" style={{ marginTop: 2 }}>
                     <strong style={{ color: 'var(--ink-3)' }}>GPU</strong> · {w.gpu}
-                    {w.vram_gb != null && (
-                      <>
-                        {' '}· {w.vram_gb.toFixed(0)} GB
-                      </>
-                    )}
+                    {w.vram_gb != null && <> · {w.vram_gb.toFixed(0)} GB</>}
                   </div>
+                )}
+                {w.served_models && w.served_models.length > 0 && (
+                  <details style={{ marginTop: 6 }}>
+                    <summary
+                      style={{
+                        fontFamily: 'var(--mono)',
+                        fontSize: 10,
+                        color: 'var(--ink-4)',
+                        cursor: 'pointer',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.08em',
+                      }}
+                    >
+                      {w.served_models.length} modèle{w.served_models.length > 1 ? 's' : ''} servi
+                      {w.served_models.length > 1 ? 's' : ''} ▾
+                    </summary>
+                    <div
+                      style={{
+                        marginTop: 4,
+                        fontFamily: 'var(--mono)',
+                        fontSize: 11,
+                        color: 'var(--ink-3)',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 4,
+                      }}
+                    >
+                      {w.served_models.map((m) => (
+                        <span
+                          key={m}
+                          style={{
+                            padding: '2px 6px',
+                            border: '1px solid var(--rule)',
+                            borderRadius: 2,
+                            background: 'var(--paper-2)',
+                          }}
+                        >
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+                  </details>
                 )}
               </div>
               <div>
@@ -311,8 +349,8 @@ function ModelsPage() {
               borderTop: '1px solid var(--rule)',
             }}
           >
-            charge et tokens / j = lecture live si le worker expose ces compteurs, sinon « — ».
-            kWh / j = estimation conservatrice TDP&nbsp;× 24h / 1000 (valeur enveloppe, pas la
+            charge et tokens / j = lecture live si le worker expose ces compteurs, sinon « — ». kWh
+            / j = estimation conservatrice TDP&nbsp;× 24h / 1000 (valeur enveloppe, pas la
             consommation réelle mesurée).
           </div>
         </div>
