@@ -16,6 +16,17 @@
 
 ---
 
+## Ressources Ailiance
+
+- **Demo live & cockpit**: https://www.ailiance.fr
+- **Status dashboard**: https://home.saillant.cc
+- **HuggingFace (IP source-of-truth)**: https://huggingface.co/electron-rare
+- **HuggingFace (distribution produit)**: https://huggingface.co/Ailiance-fr
+- **Validators audit-grade**: https://github.com/electron-rare/iact-bench
+- **Resultats bench**: https://github.com/electron-rare/electron-bench
+
+Ailiance est la pile de service LLM EU-souveraine de [L'Electron Rare](https://www.electron-rare.fr), PME francaise. Multi-modeles, audit-grade, transparence EU AI Act Art. 13/15/52/53.
+
 ## C'est quoi
 
 Le front-end de la flotte LLM [ailiance](https://github.com/ailiance/ailiance). Deux applications, un seul backend FastAPI :
