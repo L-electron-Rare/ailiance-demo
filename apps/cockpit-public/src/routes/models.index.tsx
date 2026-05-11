@@ -21,8 +21,21 @@ const BENCH = [
   { domain: 'Power electronics', origin: 31, tuned: 64, model: 'ailiance/auto' },
 ];
 
+function _fmtParams(p?: number | null) {
+  if (!p) return null;
+  if (p >= 1_000_000_000) return `${(p / 1_000_000_000).toFixed(p >= 10_000_000_000 ? 0 : 1)} B`;
+  if (p >= 1_000_000) return `${(p / 1_000_000).toFixed(0)} M`;
+  return `${p}`;
+}
+
+function _fmtGB(bytes?: number | null) {
+  if (!bytes) return null;
+  return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
+}
+
 function ModelGridCard({ card }: { card: ModelCard }) {
   const isLive = card.chat_eligible;
+  const kindBadge = card.kind && card.kind !== 'unknown' ? card.kind.toUpperCase() : null;
   return (
     <article className="model">
       <div className="model-head">
@@ -43,18 +56,32 @@ function ModelGridCard({ card }: { card: ModelCard }) {
           </span>
         </div>
         <div>
+          <span className="k">params</span>
+          <span className="v">{_fmtParams(card.parameters) ?? '—'}</span>
+        </div>
+        <div>
           <span className="k">quant</span>
           <span className="v">{card.quantization ?? '—'}</span>
+        </div>
+        <div>
+          <span className="k">format</span>
+          <span className="v">{card.architecture?.toUpperCase() ?? '—'}</span>
+        </div>
+        <div>
+          <span className="k">mémoire</span>
+          <span className="v">{card.memory_gb != null ? `${card.memory_gb.toFixed(1)} GB` : '—'}</span>
+        </div>
+        <div>
+          <span className="k">disque</span>
+          <span className="v">{_fmtGB(card.disk_size_bytes) ?? '—'}</span>
         </div>
         <div>
           <span className="k">host</span>
           <span className="v">{card.host?.split('.')[0] ?? '—'}</span>
         </div>
         <div>
-          <span className="k">score</span>
-          <span className="v">
-            {card.top_eval_score != null ? `${(card.top_eval_score * 100).toFixed(1)}%` : '—'}
-          </span>
+          <span className="k">kind</span>
+          <span className="v">{kindBadge ?? '—'}</span>
         </div>
       </div>
       <div className="model-foot">
