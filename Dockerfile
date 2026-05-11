@@ -86,6 +86,9 @@ ENV PATH="/app/.venv/bin:${PATH}" \
     COCKPIT_PORT=9100 \
     COCKPIT_FEATURED_PATH=/app/featured.yaml
 EXPOSE 9100
+COPY apps/api/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 HEALTHCHECK --interval=30s --timeout=3s --start-period=15s \
   CMD curl -fsS http://127.0.0.1:9100/api/public/healthz || exit 1
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["uvicorn", "ailiance_demo.main:app", "--host", "0.0.0.0", "--port", "9100", "--proxy-headers", "--forwarded-allow-ips", "*"]

@@ -284,8 +284,11 @@ async def _ssh_probe_gpu(host: str) -> dict | None:
         )
     import asyncio
     cmd = [
-        "ssh", "-o", "ConnectTimeout=3", "-o", "BatchMode=yes",
-        "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null",
+        "ssh",
+        "-F", "/root/.ssh.local/config",
+        "-i", "/root/.ssh.local/id_ed25519",
+        "-o", "ConnectTimeout=3", "-o", "BatchMode=yes",
+        "-o", "StrictHostKeyChecking=no",
         ssh_target, remote_cmd,
     ]
     try:
