@@ -10,7 +10,6 @@ type Tweaks = {
   theme: 'paper' | 'dark';
   density: 'compact' | 'comfortable' | 'airy';
   accent: string; // hex like '#1c3fbb'
-  showTopstrip: boolean;
 };
 
 // ── CSS injected into <head> once (panel chrome + controls) ──────────────────
@@ -92,8 +91,7 @@ function readInitialTweaks(): Tweaks {
   const density = (html.dataset.density as Tweaks['density']) ?? 'comfortable';
   const accent =
     getComputedStyle(html).getPropertyValue('--accent').trim() || '#1c3fbb';
-  const showTopstrip = !html.classList.contains('hide-topstrip');
-  return { theme, density, accent, showTopstrip };
+  return { theme, density, accent };
 }
 
 // ── TweakSection ─────────────────────────────────────────────────────────────
@@ -295,11 +293,6 @@ export default function TweaksPanel() {
     html.dataset.theme = tweaks.theme;
     html.dataset.density = tweaks.density;
     html.style.setProperty('--accent', tweaks.accent);
-    if (tweaks.showTopstrip) {
-      html.classList.remove('hide-topstrip');
-    } else {
-      html.classList.add('hide-topstrip');
-    }
     try {
       localStorage.setItem('theme', tweaks.theme);
       localStorage.setItem('density', tweaks.density);
@@ -379,7 +372,6 @@ export default function TweaksPanel() {
       theme: 'paper',
       density: 'comfortable',
       accent: '#1c3fbb',
-      showTopstrip: true,
     });
   };
 
@@ -451,13 +443,6 @@ export default function TweaksPanel() {
             label="Accent"
             value={tweaks.accent}
             onChange={(v) => set('accent', v)}
-          />
-        </TweakSection>
-        <TweakSection label="Layout">
-          <TweakToggle
-            label="Topstrip"
-            value={tweaks.showTopstrip}
-            onChange={(v) => set('showTopstrip', v)}
           />
         </TweakSection>
         <TweakSection label="Actions">
