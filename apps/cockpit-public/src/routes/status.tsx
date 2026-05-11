@@ -1,6 +1,9 @@
 import { useStatus } from '@/hooks/useStatus';
+import type { components } from '@cockpit/shared';
 import { createFileRoute } from '@tanstack/react-router';
 import { Activity, AlertCircle, CheckCircle2 } from 'lucide-react';
+
+type WorkerStatus = components['schemas']['WorkerStatus'];
 
 export const Route = createFileRoute('/status')({
   component: StatusPage,
@@ -26,7 +29,7 @@ function StatusPage() {
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {data.workers.map((w) => (
+        {data.workers.map((w: WorkerStatus) => (
           <div
             key={w.id}
             className={`rounded border p-3 ${
