@@ -236,16 +236,26 @@ function ModelsPage() {
             </span>
           </div>
           {workers.map((w) => (
-            <div className="worker-row" key={w.id}>
+            <div className="worker-row worker-row-rich" key={w.id}>
               <span
                 className="dot"
                 style={{ background: w.healthy ? 'var(--ok)' : 'var(--bad)' }}
               />
-              <div>
+              <div className="worker-ident">
                 <div className="id">{w.label}</div>
                 <div className="host">
                   {w.host} · {w.id}
                 </div>
+                {w.gpu && (
+                  <div className="host" style={{ marginTop: 2 }}>
+                    <strong style={{ color: 'var(--ink-3)' }}>GPU</strong> · {w.gpu}
+                    {w.vram_gb != null && (
+                      <>
+                        {' '}· {w.vram_gb.toFixed(0)} GB
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <div className="label">latence</div>
@@ -254,9 +264,34 @@ function ModelsPage() {
                 </div>
               </div>
               <div>
-                <div className="label">uptime</div>
+                <div className="label">charge</div>
                 <div className="val tnum">
-                  {w.uptime_s > 0 ? `${Math.floor(w.uptime_s / 3600)} h` : '—'}
+                  {w.load_pct != null ? `${w.load_pct.toFixed(0)} %` : '—'}
+                </div>
+              </div>
+              <div>
+                <div className="label">tokens / j</div>
+                <div className="val tnum">
+                  {w.tokens_today != null
+                    ? w.tokens_today >= 1_000_000
+                      ? `${(w.tokens_today / 1_000_000).toFixed(1)} M`
+                      : w.tokens_today >= 1_000
+                        ? `${(w.tokens_today / 1_000).toFixed(1)} k`
+                        : `${w.tokens_today}`
+                    : '—'}
+                </div>
+              </div>
+              <div>
+                <div className="label">kWh / j</div>
+                <div
+                  className="val tnum"
+                  title={
+                    w.tdp_w != null
+                      ? `Estimation TDP × 24 h = ${w.tdp_w} W × 24 h / 1000`
+                      : undefined
+                  }
+                >
+                  {w.kwh_per_day != null ? `~${w.kwh_per_day.toFixed(2)}` : '—'}
                 </div>
               </div>
               <div>
@@ -267,6 +302,19 @@ function ModelsPage() {
               </div>
             </div>
           ))}
+          <div
+            style={{
+              padding: '10px 14px',
+              fontFamily: 'var(--mono)',
+              fontSize: 10,
+              color: 'var(--ink-4)',
+              borderTop: '1px solid var(--rule)',
+            }}
+          >
+            charge et tokens / j = lecture live si le worker expose ces compteurs, sinon « — ».
+            kWh / j = estimation conservatrice TDP&nbsp;× 24h / 1000 (valeur enveloppe, pas la
+            consommation réelle mesurée).
+          </div>
         </div>
       </section>
 
