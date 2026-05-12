@@ -186,6 +186,16 @@ async def stream_chat(
                     if not choices:
                         continue
                     delta = choices[0].get("delta") or {}
+                    # DeepSeek-R1 distill (and other reasoning models served
+                    # via mlx_lm.server) emit tokens in delta.reasoning
+                    # instead of delta.content, following the OpenAI
+                    # Reasoning API style. Consume both fields, preserving
+                    # temporal order, so the cockpit sees a non-empty stream
+                    # for ailiance/reasoning-r1 et al.
+                    reasoning = delta.get("reasoning")
+                    if reasoning:
+                        out = json.dumps({"text": reasoning})
+                        yield f"event: token\ndata: {out}\n\n".encode()
                     text = delta.get("content")
                     if text:
                         out = json.dumps({"text": text})
