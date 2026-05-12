@@ -1,6 +1,6 @@
 import { type ChatMessage, useChatStream } from '@/hooks/useChatStream';
 import { Square } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { type ChatParams, ParamsPanel } from './ParamsPanel';
 import { PromptInput } from './PromptInput';
@@ -10,13 +10,49 @@ interface Props {
   modelDisplayName: string;
 }
 
+// Aliases whose worker spends a large fraction of its token budget on a
+// hidden chain-of-thought before producing the user-facing answer.
+// Defaulting these to 1024 max_tokens (the generic default) truncates the
+// thinking phase and the user sees a reply that ends mid-reasoning. Bump
+// to 2048 so the model has room to finish the thought *and* answer.
+//
+// Worker-side payloads remain capped by their own context window; this is
+// only a Playground UX default. Power users can override via ParamsPanel.
+const REASONING_ALIASES = new Set([
+  'ailiance-gemma2',
+  'ailiance-reasoning-r1',
+  'ailiance-ministral-reasoning',
+  'ailiance-apertus-math-reasoning',
+]);
+
+const DEFAULT_MAX_TOKENS = 1024;
+const REASONING_MAX_TOKENS = 2048;
+
+function defaultMaxTokensFor(modelId: string): number {
+  return REASONING_ALIASES.has(modelId) ? REASONING_MAX_TOKENS : DEFAULT_MAX_TOKENS;
+}
+
 export function ChatPlayground({ modelId, modelDisplayName }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [params, setParams] = useState<ChatParams>({
     temperature: 0.7,
-    max_tokens: 1024,
+    max_tokens: defaultMaxTokensFor(modelId),
     system_prompt: '',
   });
+
+  // When the user switches model in the parent route, lift max_tokens to
+  // the reasoning default — but only if they haven't customized it (still
+  // sitting on the generic default). This preserves user overrides.
+  useEffect(() => {
+    setParams((p) => {
+      const isReasoning = REASONING_ALIASES.has(modelId);
+      const stillAtDefault =
+        p.max_tokens === DEFAULT_MAX_TOKENS || p.max_tokens === REASONING_MAX_TOKENS;
+      if (!stillAtDefault) return p;
+      const target = isReasoning ? REASONING_MAX_TOKENS : DEFAULT_MAX_TOKENS;
+      return p.max_tokens === target ? p : { ...p, max_tokens: target };
+    });
+  }, [modelId]);
   const { assistantText, isStreaming, error, send, stop } = useChatStream();
 
   const handleSubmit = async (text: string) => {
