@@ -6,6 +6,7 @@ caching we'd amplify gateway load by 100x for no benefit.
 """
 from __future__ import annotations
 
+import asyncio
 import re
 import time
 from collections.abc import Iterable
@@ -190,7 +191,7 @@ def _host_for_worker(w: dict) -> str | None:
 
 # Light, mutable cache. The router endpoint sets _cache when it refreshes.
 _cache: dict[str, tuple[float, object]] = {}
-TTL_SECONDS = 10.0
+TTL_SECONDS = 30.0
 
 
 def _cache_get(key: str) -> object | None:
@@ -528,11 +529,12 @@ async def fetch_workers_status(gateway_url: str) -> list[WorkerStatus]:
     async with httpx.AsyncClient() as client:
         request_counts = await _fetch_gateway_request_counts(client, gateway_url)
         host_probes = await _gather_host_probes()
-        results = []
-        for w in WORKERS:
-            results.append(
-                await _probe_one(client, w, request_counts, host_probes)
-            )
+        # Probe all workers in parallel to bound total latency to
+        # ~max(probe), not sum(probe). 11 workers * 300 ms sequential
+        # = 3.3 s -> ~500 ms. Fixes "probe indisponible" on cockpit.
+        results = list(await asyncio.gather(
+            *(_probe_one(client, w, request_counts, host_probes) for w in WORKERS)
+        ))
     _cache_set("workers", results)
     return results
 
