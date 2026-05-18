@@ -1,8 +1,9 @@
-import { useModels } from '@/hooks/useModels';
+import { getModels } from '@/lib/server-fns';
 import { Link, createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
+  loader: async () => ({ models: await getModels() }),
 });
 
 const MISSIONS = [
@@ -46,10 +47,10 @@ function FranceStamp() {
 }
 
 function HomePage() {
-  const { data: all, isLoading } = useModels();
+  const { models } = Route.useLoaderData();
 
   // Featured = live models sorted by featured_rank, max 6 (single presentation)
-  const featured = (all ?? [])
+  const featured = models
     .filter((c) => c.chat_eligible)
     .sort((a, b) => (a.featured_rank ?? 999) - (b.featured_rank ?? 999))
     .slice(0, 6);
@@ -131,79 +132,63 @@ function HomePage() {
           </p>
         </div>
         <div className="models-grid">
-          {isLoading ? (
-            <div
-              className="model"
-              style={{
-                gridColumn: '1/-1',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: 120,
-              }}
+          {featured.map((w) => (
+            <Link
+              key={w.id}
+              to="/chat/$owner/$name"
+              params={{ owner: w.owner, name: w.name }}
+              style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              <span className="muted mono" style={{ fontSize: 12 }}>
-                chargement…
-              </span>
-            </div>
-          ) : (
-            featured.map((w) => (
-              <Link
-                key={w.id}
-                to="/chat/$owner/$name"
-                params={{ owner: w.owner, name: w.name }}
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                <article className="model">
-                  <div className="model-head">
+              <article className="model">
+                <div className="model-head">
+                  <div>
+                    <div className="model-id">{w.id}</div>
+                    <h3>{w.display_name}</h3>
+                  </div>
+                  <span className="badge live">LIVE</span>
+                </div>
+                {w.featured_headline && <p className="model-headline">{w.featured_headline}</p>}
+                <div className="model-stats">
+                  {w.base_model && (
                     <div>
-                      <div className="model-id">{w.id}</div>
-                      <h3>{w.display_name}</h3>
+                      <span className="k">base</span>
+                      <span className="v">{w.base_model}</span>
                     </div>
-                    <span className="badge live">LIVE</span>
-                  </div>
-                  {w.featured_headline && <p className="model-headline">{w.featured_headline}</p>}
-                  <div className="model-stats">
-                    {w.base_model && (
-                      <div>
-                        <span className="k">base</span>
-                        <span className="v">{w.base_model}</span>
-                      </div>
-                    )}
-                    {w.quantization && (
-                      <div>
-                        <span className="k">quant</span>
-                        <span className="v">{w.quantization}</span>
-                      </div>
-                    )}
-                    {w.memory_gb && (
-                      <div>
-                        <span className="k">mem</span>
-                        <span className="v">{w.memory_gb.toFixed(0)} GB</span>
-                      </div>
-                    )}
-                    {w.host && (
-                      <div>
-                        <span className="k">host</span>
-                        <span className="v">{w.host.split('.')[0]}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="model-foot">
-                    {w.top_eval_benchmark && w.top_eval_score != null ? (
-                      <span>
-                        {w.top_eval_benchmark} {(w.top_eval_score * 100).toFixed(1)}%
-                      </span>
-                    ) : (
-                      <span />
-                    )}
-                    <span className="model-try">
-                      Essayer <ArrowRight size={12} />
+                  )}
+                  {w.quantization && (
+                    <div>
+                      <span className="k">quant</span>
+                      <span className="v">{w.quantization}</span>
+                    </div>
+                  )}
+                  {w.memory_gb && (
+                    <div>
+                      <span className="k">mem</span>
+                      <span className="v">{w.memory_gb.toFixed(0)} GB</span>
+                    </div>
+                  )}
+                  {w.host && (
+                    <div>
+                      <span className="k">host</span>
+                      <span className="v">{w.host.split('.')[0]}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="model-foot">
+                  {w.top_eval_benchmark && w.top_eval_score != null ? (
+                    <span>
+                      {w.top_eval_benchmark} {(w.top_eval_score * 100).toFixed(1)}%
                     </span>
-                  </div>
-                </article>
-              </Link>
-            ))
-          )}
+                  ) : (
+                    <span />
+                  )}
+                  <span className="model-try">
+                    Essayer <ArrowRight size={12} />
+                  </span>
+                </div>
+              </article>
+            </Link>
+          ))}
         </div>
         <div style={{ marginTop: 32, textAlign: 'center' }}>
           <Link to="/models" className="btn">
