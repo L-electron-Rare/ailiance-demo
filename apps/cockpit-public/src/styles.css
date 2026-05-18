@@ -1618,6 +1618,11 @@ section.block {
     padding-top: 6px;
     padding-bottom: 6px;
   }
+  /* Drop the secondary telemetry cells (p50/p95/rpm/tx) so the live
+     strip shows its core health signals without horizontal scroll. */
+  .topstrip-cell--sec {
+    display: none;
+  }
   .nav-toggle {
     display: flex;
     flex-direction: column;
