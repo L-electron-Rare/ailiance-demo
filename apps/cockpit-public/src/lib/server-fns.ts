@@ -28,25 +28,25 @@ const PROVENANCE_FILES: Record<string, string> = {
   'ailiance/auto': 'auto-router-minilm.json',
 };
 
-export const getModels = createServerFn({ method: 'GET' }).handler(
+export const getModels = createServerFn({ method: 'GET', strict: false }).handler(
   async () => serverApi.get<ModelCard[]>('/api/public/models'),
 );
 
-export const getStatus = createServerFn({ method: 'GET' }).handler(
+export const getStatus = createServerFn({ method: 'GET', strict: false }).handler(
   async () => serverApi.get<StatusReport>('/api/public/status'),
 );
 
-export const getTelemetry = createServerFn({ method: 'GET' }).handler(
+export const getTelemetry = createServerFn({ method: 'GET', strict: false }).handler(
   async () => serverApi.get<TelemetryResponse>('/api/public/telemetry'),
 );
 
-export const getModelDetail = createServerFn({ method: 'GET' })
+export const getModelDetail = createServerFn({ method: 'GET', strict: false })
   .inputValidator((d: { owner: string; name: string }) => d)
   .handler(async ({ data }) =>
     serverApi.get<ModelCard>(`/api/public/models/${data.owner}/${data.name}`),
   );
 
-export const getEvalScores = createServerFn({ method: 'GET' })
+export const getEvalScores = createServerFn({ method: 'GET', strict: false })
   .inputValidator((d: { owner: string; name: string }) => d)
   .handler(async ({ data }): Promise<EvalSummary | null> => {
     try {
@@ -59,14 +59,14 @@ export const getEvalScores = createServerFn({ method: 'GET' })
     }
   });
 
-export const getMascaradeLoras = createServerFn({ method: 'GET' }).handler(
+export const getMascaradeLoras = createServerFn({ method: 'GET', strict: false }).handler(
   async () =>
     serverApi.get<MascaradeLora[]>(
       '/api/public/models/ailiance/mascarade/loras',
     ),
 );
 
-export const getProvenance = createServerFn({ method: 'GET' })
+export const getProvenance = createServerFn({ method: 'GET', strict: false })
   .inputValidator((d: { modelId: string }) => d)
   .handler(async ({ data }): Promise<Record<string, unknown> | null> => {
     const filename = PROVENANCE_FILES[data.modelId];
