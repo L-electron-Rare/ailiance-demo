@@ -46,16 +46,16 @@ export function Topstrip({ telemetry }: TopstripProps) {
           <span className="k">gateway</span>
           <span className={gatewayClass}>{data.gateway.toUpperCase()}</span>
         </div>
-        <div className="topstrip-cell">
+        <div className="topstrip-cell topstrip-cell--sec">
           <span className="k">p50</span>
           <span className="v tnum">{fmt(data.latency_p50_ms)}</span>
         </div>
-        <div className="topstrip-cell">
+        <div className="topstrip-cell topstrip-cell--sec">
           <span className="k">p95</span>
           <span className="v tnum">{fmt(data.latency_p95_ms)}</span>
         </div>
         {data.requests_per_min != null && (
-          <div className="topstrip-cell">
+          <div className="topstrip-cell topstrip-cell--sec">
             <span className="k">rpm</span>
             <span className="v tnum">
               {data.requests_per_min >= 1000
@@ -64,7 +64,10 @@ export function Topstrip({ telemetry }: TopstripProps) {
             </span>
           </div>
         )}
-        <div className="topstrip-cell" style={{ marginLeft: 'auto', borderRight: 0 }}>
+        <div
+          className="topstrip-cell topstrip-cell--sec"
+          style={{ marginLeft: 'auto', borderRight: 0 }}
+        >
           <span className="k">tx</span>
           <span className="v">eu-fr · electron-server</span>
         </div>
