@@ -3,7 +3,13 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
-  loader: async () => ({ models: await getModels() }),
+  loader: async () => {
+    try {
+      return { models: await getModels() };
+    } catch {
+      return { models: [] };
+    }
+  },
 });
 
 const MISSIONS = [
