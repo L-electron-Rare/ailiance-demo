@@ -34,7 +34,7 @@ http:
     kiki-public:
       loadBalancer:
         servers:
-          - url: 'http://ailiance-demo-public-1:80'
+          - url: 'http://ailiance-demo-public-1:3000'
     kiki-admin:
       loadBalancer:
         servers:
