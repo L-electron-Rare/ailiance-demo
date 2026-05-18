@@ -37,12 +37,14 @@ ARG VITE_API_BASE_URL=
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 RUN pnpm --filter cockpit-public build
 
-# --- cockpit-public runtime -------------------------------------------------
-FROM nginx:1.27-alpine AS public
-COPY deploy/nginx/spa.conf /etc/nginx/conf.d/default.conf
-COPY --from=public-build /repo/apps/cockpit-public/dist /usr/share/nginx/html
-EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+# --- cockpit-public runtime (SSR Node server) ---
+FROM node:20-bookworm-slim AS public
+WORKDIR /app
+COPY --from=public-build /repo/apps/cockpit-public/.output ./.output
+ENV PORT=3000
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s CMD node -e "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["node", ".output/server/index.mjs"]
 
 # --- cockpit-admin build ----------------------------------------------------
 FROM node-base AS admin-build

@@ -21,6 +21,8 @@ __pycache__/
 
 # Build outputs
 apps/cockpit-public/dist/
+apps/cockpit-public/.output/
+apps/cockpit-public/.nitro/
 apps/cockpit-admin/dist/
 apps/api/dist/
 packages/shared/src/api/types.ts

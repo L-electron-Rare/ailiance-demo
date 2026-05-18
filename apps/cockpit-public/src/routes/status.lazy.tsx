@@ -1,8 +1,8 @@
-import { useStatus } from '@/hooks/useStatus';
-import { useTelemetry } from '@/hooks/useTelemetry';
 import type { components } from '@cockpit/shared';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute, getRouteApi, useRouter } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
+
+const rootRoute = getRouteApi('__root__');
 
 type WorkerStatus = components['schemas']['WorkerStatus'];
 
@@ -149,13 +149,29 @@ const INCIDENTS = [
 ];
 
 function StatusPage() {
-  const { data: statusData, isLoading: statusLoading, isError: statusError } = useStatus();
-  const { data: telemetry } = useTelemetry();
+  const { status: statusData } = Route.useLoaderData();
+  const { telemetry } = rootRoute.useLoaderData();
+  const router = useRouter();
   const [tick, setTick] = useState(0);
+  const [lastPoll, setLastPoll] = useState('');
 
+  // Sparkline tick — local UI animation only.
   useEffect(() => {
     const i = setInterval(() => setTick((t) => t + 1), 1500);
     return () => clearInterval(i);
+  }, []);
+
+  // Live refresh — invalidate the route loader every 15 s (matches the
+  // old `useStatus` refetchInterval).
+  useEffect(() => {
+    const i = setInterval(() => router.invalidate(), 15000);
+    return () => clearInterval(i);
+  }, [router]);
+
+  // P1 hydration fix: read the current clock client-side only so the SSR
+  // and hydrated HTML do not disagree.
+  useEffect(() => {
+    setLastPoll(new Date().toISOString().slice(11, 19));
   }, []);
 
   const workers: WorkerStatus[] = statusData?.workers ?? [];
@@ -194,17 +210,13 @@ function StatusPage() {
               letterSpacing: '0.12em',
             }}
           >
-            <div>last poll · {new Date().toISOString().slice(11, 19)}Z</div>
+            <div>last poll · {lastPoll}Z</div>
             <div>next in · {15 - (tick % 15)}s</div>
           </div>
         </div>
 
         <div className="summary-grid">
-          <SummaryStat
-            label="FLEET"
-            value={statusLoading ? '…' : `${healthyCount}/${totalCount}`}
-            sub="healthy"
-          />
+          <SummaryStat label="FLEET" value={`${healthyCount}/${totalCount}`} sub="healthy" />
           <SummaryStat label="p50" value={p50} sub="ms" />
           {/* TODO: wire req/24h to /api/public/telemetry */}
           <SummaryStat label="req / 24h" value="—" sub="all workers" />
@@ -214,12 +226,6 @@ function StatusPage() {
       </section>
 
       <section className="wrap" style={{ paddingTop: 24 }}>
-        {statusError && (
-          <p style={{ color: 'var(--bad)', fontFamily: 'var(--mono)', fontSize: 13 }}>
-            Failed to load worker status.
-          </p>
-        )}
-
         <div className="fleet-board">
           <div className="board-row head">
             <span />
