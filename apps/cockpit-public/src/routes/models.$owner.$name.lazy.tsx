@@ -1,10 +1,6 @@
 import { DatasetList } from '@/components/ModelDetail/DatasetList';
 import { EvalScores } from '@/components/ModelDetail/EvalScores';
 import { Provenance } from '@/components/ModelDetail/Provenance';
-import { useEvalScores } from '@/hooks/useEvalScores';
-import { useMascaradeLoras } from '@/hooks/useMascaradeLoras';
-import { useModelDetail } from '@/hooks/useModelDetail';
-import { useProvenance } from '@/hooks/useProvenance';
 import { Link, createLazyFileRoute } from '@tanstack/react-router';
 
 export const Route = createLazyFileRoute('/models/$owner/$name')({
@@ -31,49 +27,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 function ModelDetailPage() {
   const { owner, name } = Route.useParams();
-  const id = `${owner}/${name}`;
-
-  const detail = useModelDetail(owner, name);
+  const { model: card, evalScores, loras, provenance } = Route.useLoaderData();
   const isMascarade = owner === 'ailiance' && name === 'mascarade';
-  const loras = useMascaradeLoras(isMascarade);
-  const evals = useEvalScores(owner, name);
-  const provenance = useProvenance(id);
-
-  if (detail.isLoading) {
-    return (
-      <main>
-        <section className="wrap page-head">
-          <div className="kicker">
-            <Link to="/models" style={{ cursor: 'pointer' }}>
-              ← Catalogue
-            </Link>
-          </div>
-          <p style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--ink-4)' }}>
-            Chargement…
-          </p>
-        </section>
-      </main>
-    );
-  }
-
-  if (detail.error || !detail.data) {
-    return (
-      <main>
-        <section className="wrap page-head">
-          <div className="kicker">
-            <Link to="/models" style={{ cursor: 'pointer' }}>
-              ← Catalogue
-            </Link>
-          </div>
-          <p style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--bad)' }}>
-            Modèle introuvable.
-          </p>
-        </section>
-      </main>
-    );
-  }
-
-  const card = detail.data;
   const isLive = card.chat_eligible;
 
   // Split display_name for italic last word styling (mirrors model-detail.jsx)
@@ -214,13 +169,13 @@ function ModelDetailPage() {
           </div>
 
           {/* Eval bars — inline design matching model-detail.jsx */}
-          {evals.data?.by_benchmark && Object.keys(evals.data.by_benchmark).length > 0 && (
+          {evalScores?.by_benchmark && Object.keys(evalScores.by_benchmark).length > 0 && (
             <>
               <div style={{ marginTop: 40 }}>
                 <SectionLabel>Évaluations</SectionLabel>
               </div>
               <div>
-                {Object.entries(evals.data.by_benchmark).map(([bench, result]) => (
+                {Object.entries(evalScores.by_benchmark).map(([bench, result]) => (
                   <div className="eval-bar" key={bench}>
                     <span className="name">{bench}</span>
                     <span className="track">
@@ -286,7 +241,7 @@ function ModelDetailPage() {
           )}
 
           {/* Mascarade family — list of the 12 LoRA specialists */}
-          {isMascarade && loras.data && loras.data.length > 0 && (
+          {isMascarade && loras && loras.length > 0 && (
             <div style={{ marginTop: 40 }}>
               <SectionLabel>12 LoRAs spécialistes</SectionLabel>
               <p
@@ -310,7 +265,7 @@ function ModelDetailPage() {
                   border: '1px solid var(--rule)',
                 }}
               >
-                {loras.data.map((lo, idx) => (
+                {loras.map((lo, idx) => (
                   <div
                     key={lo.name}
                     style={{
@@ -461,7 +416,7 @@ function ModelDetailPage() {
           {/* Provenance JSON preview — Annex IV §1(c) */}
           <div style={{ marginTop: 40 }}>
             <SectionLabel>Provenance · Annex IV §1(c)</SectionLabel>
-            {provenance.data ? (
+            {provenance ? (
               <pre
                 style={{
                   background: 'var(--paper-2)',
@@ -474,7 +429,7 @@ function ModelDetailPage() {
                   overflowX: 'auto',
                 }}
               >
-                {JSON.stringify(provenance.data, null, 2)}
+                {JSON.stringify(provenance, null, 2)}
               </pre>
             ) : (
               <pre
@@ -610,9 +565,9 @@ function ModelDetailPage() {
           </div>
 
           {/* Full EvalScores component (table fallback if inline bars not enough) */}
-          {evals.data && (
+          {evalScores && (
             <div style={{ marginTop: 18 }}>
-              <EvalScores summary={evals.data} />
+              <EvalScores summary={evalScores} />
             </div>
           )}
 
