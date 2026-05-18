@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { useState } from 'react';
 
 const NAV_ITEMS: [string, string][] = [
   ['/', 'Accueil'],
@@ -9,10 +10,15 @@ const NAV_ITEMS: [string, string][] = [
 ];
 
 export function Header() {
+  // Mobile nav: the full horizontal nav overflows ≤768px, so it collapses
+  // behind a hamburger toggle. CSS hides the toggle on wider viewports.
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+
   return (
     <header className="masthead">
       <div className="wrap masthead-inner">
-        <Link to="/" className="brand">
+        <Link to="/" className="brand" onClick={close}>
           <span className="brand-mark">
             <svg
               aria-hidden="true"
@@ -35,9 +41,21 @@ export function Header() {
             <span>souveraine</span>
           </span>
         </Link>
-        <nav className="nav">
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-label="Menu"
+          aria-controls="site-nav"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+        <nav id="site-nav" className={open ? 'nav nav-open' : 'nav'}>
           {NAV_ITEMS.map(([path, label]) => (
-            <Link key={path} to={path} activeProps={{ 'aria-current': 'page' }}>
+            <Link key={path} to={path} activeProps={{ 'aria-current': 'page' }} onClick={close}>
               {label}
             </Link>
           ))}
