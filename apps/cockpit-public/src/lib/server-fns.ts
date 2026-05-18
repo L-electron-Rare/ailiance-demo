@@ -1,3 +1,10 @@
+// All server fns use { strict: false }: Start 1.168.6's strict mode
+// validates that the return type is serializable via Register augmentation;
+// without it, complex types (ModelCard, EvalSummary, etc.) are erased to
+// {} in loader callsites. Since Phase B only invokes these fns from SSR
+// loaders (no client-side RPC), there's no risk of silent JSON round-trip
+// data loss. Revisit if Phase C introduces client-side invalidation that
+// crosses the serialization boundary.
 import type { components } from '@cockpit/shared';
 import { ApiError } from '@cockpit/shared';
 import { createServerFn } from '@tanstack/react-start';
