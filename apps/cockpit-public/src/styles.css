@@ -319,6 +319,10 @@ main.wrap {
 .nav-flag i:nth-child(3) {
   background: var(--rouge);
 }
+/* Hamburger toggle — hidden on desktop, shown ≤768px (see media query). */
+.nav-toggle {
+  display: none;
+}
 
 /* ============ page header ============ */
 .page-head {
@@ -1604,5 +1608,71 @@ section.block {
   .summary-grid > *:nth-child(2n),
   .backends-grid > * {
     border-right: none !important;
+  }
+}
+
+/* ============ mobile header — hamburger nav (≤768px) ============ */
+@media (max-width: 768px) {
+  .masthead-inner {
+    gap: 0 16px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    align-self: center;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    margin: 0 auto;
+    background: var(--ink);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  /* Nav drops to its own full-width row below brand + toggle. */
+  .nav {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    border-top: 1px solid var(--rule);
+  }
+  .nav.nav-open {
+    display: flex;
+  }
+  .nav a {
+    height: auto;
+    padding: 14px 4px;
+    font-size: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav a[aria-current="page"]::after {
+    left: 4px;
+    right: auto;
+    width: 22px;
+    bottom: 8px;
+  }
+  .nav-flag {
+    margin: 12px 4px 4px;
   }
 }
